@@ -1,0 +1,89 @@
+[
+  {
+    "id": "handle_missing_median",
+    "name": "欠損値補完（中央値）",
+    "description": "指定された数値列の欠損値を中央値で補完します。",
+    "tags": ["データクレンジング", "欠損値"],
+    "parameters": [
+      {"name": "column", "type": "string", "description": "補完対象の列名", "required": true}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\ndf = pd.read_csv('{data_path}')\nmedian_val = df['{column}'].median()\nprint(f'{column}の中央値: {median_val}')\ndf['{column}'].fillna(median_val, inplace=True)\nprint(f'欠損値補完後の{column}の欠損値数: {df[\\'{column}\\'].isnull().sum()}')\ndf.to_csv('{output_path}/processed_data.csv', index=False)"
+    }
+  },
+  {
+    "id": "handle_missing_mean",
+    "name": "欠損値補完（平均値）",
+    "description": "指定された数値列の欠損値を平均値で補完します。",
+    "tags": ["データクレンジング", "欠損値"],
+    "parameters": [
+      {"name": "column", "type": "string", "description": "補完対象の列名", "required": true}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\ndf = pd.read_csv('{data_path}')\nmean_val = df['{column}'].mean()\nprint(f'{column}の平均値: {mean_val}')\ndf['{column}'].fillna(mean_val, inplace=True)\nprint(f'欠損値補完後の{column}の欠損値数: {df[\\'{column}\\'].isnull().sum()}')\ndf.to_csv('{output_path}/processed_data.csv', index=False)"
+    }
+  },
+  {
+    "id": "remove_outliers_iqr",
+    "name": "外れ値除去（IQR法）",
+    "description": "四分位範囲（IQR）を使用して外れ値を除去します。",
+    "tags": ["データクレンジング", "外れ値"],
+    "parameters": [
+      {"name": "column", "type": "string", "description": "外れ値除去対象の列名", "required": true}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\nimport numpy as np\ndf = pd.read_csv('{data_path}')\nQ1 = df['{column}'].quantile(0.25)\nQ3 = df['{column}'].quantile(0.75)\nIQR = Q3 - Q1\nlower_bound = Q1 - 1.5 * IQR\nupper_bound = Q3 + 1.5 * IQR\nprint(f'外れ値の境界: {lower_bound:.2f} - {upper_bound:.2f}')\noutliers = df[(df['{column}'] < lower_bound) | (df['{column}'] > upper_bound)]\nprint(f'除去される外れ値の数: {len(outliers)}')\ndf_clean = df[(df['{column}'] >= lower_bound) & (df['{column}'] <= upper_bound)]\nprint(f'元データ数: {len(df)}, 処理後データ数: {len(df_clean)}')\ndf_clean.to_csv('{output_path}/cleaned_data.csv', index=False)"
+    }
+  },
+  {
+    "id": "standardize_features",
+    "name": "特徴量標準化",
+    "description": "指定された数値列を標準化（平均0、分散1）します。",
+    "tags": ["前処理", "正規化"],
+    "parameters": [
+      {"name": "columns", "type": "list", "description": "標準化対象の列名リスト", "required": true}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\nfrom sklearn.preprocessing import StandardScaler\ndf = pd.read_csv('{data_path}')\nscaler = StandardScaler()\ndf_scaled = df.copy()\ndf_scaled[{columns}] = scaler.fit_transform(df[{columns}])\nprint('標準化前後の統計情報:')\nprint('標準化前:')\nprint(df[{columns}].describe())\nprint('\\n標準化後:')\nprint(df_scaled[{columns}].describe())\ndf_scaled.to_csv('{output_path}/standardized_data.csv', index=False)"
+    }
+  },
+  {
+    "id": "convert_to_datetime",
+    "name": "日付型変換",
+    "description": "文字列形式の日付データをdatetime型に変換します。",
+    "tags": ["データ型変換", "日付処理"],
+    "parameters": [
+      {"name": "column", "type": "string", "description": "変換対象の列名", "required": true},
+      {"name": "format", "type": "string", "description": "日付フォーマット", "required": false}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\ndf = pd.read_csv('{data_path}')\nprint(f'変換前のデータ型: {df[\\'{column}\\'].dtype}')\nif '{format}' != '':\n    df['{column}'] = pd.to_datetime(df['{column}'], format='{format}')\nelse:\n    df['{column}'] = pd.to_datetime(df['{column}'])\nprint(f'変換後のデータ型: {df[\\'{column}\\'].dtype}')\nprint(f'日付範囲: {df[\\'{column}\\'].min()} から {df[\\'{column}\\'].max()}')\ndf.to_csv('{output_path}/datetime_converted.csv', index=False)"
+    }
+  },
+  {
+    "id": "create_dummy_variables",
+    "name": "ダミー変数作成",
+    "description": "カテゴリカル変数をダミー変数に変換します。",
+    "tags": ["特徴量エンジニアリング", "カテゴリカルデータ"],
+    "parameters": [
+      {"name": "column", "type": "string", "description": "ダミー変数化する列名", "required": true}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\ndf = pd.read_csv('{data_path}')\nprint(f'元の{column}のユニーク値: {df[\\'{column}\\'].unique()}')\ndummies = pd.get_dummies(df['{column}'], prefix='{column}')\ndf_with_dummies = pd.concat([df, dummies], axis=1)\nprint(f'作成されたダミー変数: {list(dummies.columns)}')\ndf_with_dummies.to_csv('{output_path}/dummy_variables.csv', index=False)"
+    }
+  },
+  {
+    "id": "aggregate_by_month",
+    "name": "月別集計",
+    "description": "日付列を基準に月別でデータを集計します。",
+    "tags": ["集計", "時系列"],
+    "parameters": [
+      {"name": "date_column", "type": "string", "description": "日付列名", "required": true},
+      {"name": "value_column", "type": "string", "description": "集計する値の列名", "required": true},
+      {"name": "aggregation", "type": "string", "description": "集計方法（sum, mean, count等）", "required": false}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\ndf = pd.read_csv('{data_path}')\ndf['{date_column}'] = pd.to_datetime(df['{date_column}'])\ndf['year_month'] = df['{date_column}'].dt.to_period('M')\nagg_method = '{aggregation}' if '{aggregation}' != '' else 'sum'\nif agg_method == 'sum':\n    monthly_data = df.groupby('year_month')['{value_column}'].sum().reset_index()\nelif agg_method == 'mean':\n    monthly_data = df.groupby('year_month')['{value_column}'].mean().reset_index()\nelif agg_method == 'count':\n    monthly_data = df.groupby('year_month')['{value_column}'].count().reset_index()\nelse:\n    monthly_data = df.groupby('year_month')['{value_column}'].sum().reset_index()\nmonthly_data['year_month'] = monthly_data['year_month'].astype(str)\nprint('月別集計結果:')\nprint(monthly_data)\nmonthly_data.to_csv('{output_path}/monthly_aggregated.csv', index=False)"
+    }
+  }
+]

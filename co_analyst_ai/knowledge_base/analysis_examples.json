@@ -1,0 +1,164 @@
+[
+  {
+    "id": "sales_trend_analysis",
+    "user_queries": ["売上のトレンド分析をして", "最近の売上推移を教えて", "売上データを可視化したい"],
+    "description": "期間別の売上トレンドを分析し、可視化する例。",
+    "steps": [
+      {
+        "step_id": "1",
+        "step_name": "データロードと確認",
+        "task_description": "CSVからデータを読み込み、最初の数行を表示してデータ構造を確認。",
+        "method_id": "data_load_preview",
+        "output_expected": "データフレームのヘッダーと最初の5行"
+      },
+      {
+        "step_id": "2",
+        "step_name": "日付列の変換",
+        "task_description": "日付データが文字列の場合、datetime型に変換。",
+        "method_id": "convert_to_datetime",
+        "parameters": {"column": "日付"},
+        "output_expected": "日付列がdatetime型に変換されたことの確認"
+      },
+      {
+        "step_id": "3",
+        "step_name": "月別売上集計",
+        "task_description": "月ごとに売上を集計。",
+        "method_id": "aggregate_by_month",
+        "parameters": {"date_column": "日付", "value_column": "売上", "aggregation": "sum"},
+        "output_expected": "月ごとの売上合計テーブル"
+      },
+      {
+        "step_id": "4",
+        "step_name": "トレンドグラフ可視化",
+        "task_description": "集計した月別売上を折れ線グラフで可視化。",
+        "method_id": "line_chart",
+        "parameters": {"x_axis": "year_month", "y_axis": "売上", "title": "月別売上トレンド"},
+        "output_expected": "折れ線グラフの画像パスと簡単な説明"
+      }
+    ],
+    "sample_interaction": [
+      {"role": "user", "text": "売上データを分析したいのですが、まずトレンドを見てみたいです。"},
+      {"role": "agent", "text": "承知いたしました。売上データのトレンド分析ですね。まず、データを確認し、日付データがあればそれを元に月別の売上を集計し、折れ線グラフで可視化することを提案します。よろしいでしょうか？"},
+      {"role": "user", "text": "はい、お願いします。"},
+      {"role": "agent", "text": "（内部処理：データロード、日付変換、集計、グラフ生成）月別売上トレンドグラフを生成しました。グラフを見ると、特定の月に売上がピークを迎えているようです。何か気になる点があればお聞かせください。"}
+    ]
+  },
+  {
+    "id": "customer_segmentation",
+    "user_queries": ["顧客セグメンテーションを行って", "顧客をグループ分けしたい", "顧客クラスターを作成して"],
+    "description": "顧客データを使ってセグメンテーション分析を行う例。",
+    "steps": [
+      {
+        "step_id": "1",
+        "step_name": "データ確認と前処理",
+        "task_description": "顧客データを読み込み、欠損値や外れ値を確認・処理。",
+        "method_id": "desc_stats_summary",
+        "output_expected": "データの概要統計と品質確認"
+      },
+      {
+        "step_id": "2",
+        "step_name": "特徴量選択と標準化",
+        "task_description": "セグメンテーションに使用する特徴量を選択し、標準化。",
+        "method_id": "standardize_features",
+        "parameters": {"columns": ["購買頻度", "購買金額", "最終購買日"]},
+        "output_expected": "標準化された特徴量データ"
+      },
+      {
+        "step_id": "3",
+        "step_name": "K-meansクラスタリング実行",
+        "task_description": "標準化されたデータでK-meansクラスタリングを実行。",
+        "method_id": "kmeans_clustering",
+        "parameters": {"features": ["購買頻度", "購買金額", "最終購買日"], "n_clusters": 4},
+        "output_expected": "クラスタリング結果とシルエット係数"
+      },
+      {
+        "step_id": "4",
+        "step_name": "クラスター分析",
+        "task_description": "各クラスターの特徴を分析。",
+        "method_id": "cluster_analysis",
+        "output_expected": "クラスター別の統計情報と特徴解釈"
+      }
+    ],
+    "sample_interaction": [
+      {"role": "user", "text": "顧客データを使って、セグメンテーションを行ってほしい。"},
+      {"role": "agent", "text": "顧客セグメンテーション分析ですね。どのような属性を使ってセグメンテーションしたいでしょうか？例えば、購買行動、デモグラフィック情報、エンゲージメントなどがあります。"},
+      {"role": "user", "text": "購買頻度、購買金額、最終購買日を使ってください。"},
+      {"role": "agent", "text": "承知いたしました。RFM分析のアプローチですね。購買頻度（Frequency）、購買金額（Monetary）、最終購買日（Recency）を使ってクラスタリングを行います。"}
+    ]
+  },
+  {
+    "id": "correlation_analysis_example",
+    "user_queries": ["変数間の関係を調べて", "相関分析をして", "どの変数が関連しているか知りたい"],
+    "description": "複数の変数間の相関関係を分析する例。",
+    "steps": [
+      {
+        "step_id": "1",
+        "step_name": "数値変数の選択",
+        "task_description": "相関分析対象の数値変数を特定。",
+        "method_id": "select_numeric_variables",
+        "output_expected": "数値変数のリスト"
+      },
+      {
+        "step_id": "2",
+        "step_name": "相関係数計算",
+        "task_description": "変数間の相関係数を計算し、相関行列を作成。",
+        "method_id": "correlation_analysis",
+        "output_expected": "相関行列とヒートマップ"
+      },
+      {
+        "step_id": "3",
+        "step_name": "相関結果の解釈",
+        "task_description": "相関係数の大きさと方向を解釈。",
+        "method_id": "correlation_interpretation",
+        "output_expected": "相関関係の解釈と重要なペアの特定"
+      }
+    ],
+    "sample_interaction": [
+      {"role": "user", "text": "データの中で、どの変数が関連しているか知りたいです。"},
+      {"role": "agent", "text": "変数間の関係を調べる相関分析を行いますね。データの中の数値変数を対象に相関係数を計算し、ヒートマップで可視化します。"},
+      {"role": "user", "text": "よろしくお願いします。"},
+      {"role": "agent", "text": "相関分析が完了しました。ヒートマップを見ると、いくつかの変数間に強い相関が見られます。特に注目すべき関係についてご説明します。"}
+    ]
+  },
+  {
+    "id": "data_exploration",
+    "user_queries": ["データを探索したい", "データの概要を知りたい", "まずデータを見てみたい"],
+    "description": "新しいデータセットの基本的な探索分析を行う例。",
+    "steps": [
+      {
+        "step_id": "1",
+        "step_name": "データの基本情報確認",
+        "task_description": "データの形状、列名、データ型を確認。",
+        "method_id": "data_info",
+        "output_expected": "データの基本情報（行数、列数、データ型）"
+      },
+      {
+        "step_id": "2",
+        "step_name": "記述統計量の計算",
+        "task_description": "数値変数の記述統計量を計算。",
+        "method_id": "desc_stats_summary",
+        "output_expected": "平均、中央値、標準偏差などの統計量"
+      },
+      {
+        "step_id": "3",
+        "step_name": "欠損値の確認",
+        "task_description": "各列の欠損値の数と割合を確認。",
+        "method_id": "missing_value_check",
+        "output_expected": "欠損値の分布情報"
+      },
+      {
+        "step_id": "4",
+        "step_name": "データ分布の可視化",
+        "task_description": "主要な変数のヒストグラムや箱ひげ図を作成。",
+        "method_id": "distribution_plots",
+        "output_expected": "データ分布を示すグラフ"
+      }
+    ],
+    "sample_interaction": [
+      {"role": "user", "text": "新しいデータセットがあるのですが、まずデータを探索したいです。"},
+      {"role": "agent", "text": "データ探索から始めましょう。まずデータの基本的な情報（行数、列数、データ型）を確認し、続いて記述統計量、欠損値の状況、データ分布を調べて全体像を把握します。"},
+      {"role": "user", "text": "それでお願いします。"},
+      {"role": "agent", "text": "データ探索が完了しました。このデータセットは[行数]行、[列数]列で構成されており、[特徴的な点]が確認できました。詳細な分析をご希望でしたら、具体的な分析目的をお聞かせください。"}
+    ]
+  }
+]

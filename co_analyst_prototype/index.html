@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Co-Analyst AI - データ分析システム</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i data-lucide="bar-chart-3"></i>
+                    <h1>Co-Analyst AI</h1>
+                </div>
+                <div class="header-info">
+                    <span class="status-indicator" id="statusIndicator">
+                        <i data-lucide="circle"></i>
+                        プロトタイプモード
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel - Analysis Input -->
+            <div class="left-panel">
+                <div class="panel-header">
+                    <h2><i data-lucide="settings"></i> 分析設定</h2>
+                </div>
+                
+                <div class="panel-content">
+                    <!-- File Upload Section -->
+                    <section class="input-section">
+                        <h3>データファイル</h3>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <i data-lucide="upload-cloud"></i>
+                            <p>CSVファイルをドラッグ&ドロップするか、クリックして選択</p>
+                            <input type="file" id="fileInput" accept=".csv" hidden>
+                        </div>
+                        <div class="file-info" id="fileInfo" style="display: none;">
+                            <i data-lucide="file-text"></i>
+                            <span id="fileName"></span>
+                            <button class="remove-file" id="removeFile">
+                                <i data-lucide="x"></i>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Quick Analysis Section -->
+                    <section class="input-section">
+                        <h3>クイック分析</h3>
+                        <div class="quick-analysis-buttons">
+                            <button class="quick-btn" data-analysis="desc_stats">
+                                <i data-lucide="bar-chart"></i>
+                                記述統計
+                            </button>
+                            <button class="quick-btn" data-analysis="correlation">
+                                <i data-lucide="scatter-chart"></i>
+                                相関分析
+                            </button>
+                            <button class="quick-btn" data-analysis="regression">
+                                <i data-lucide="trending-up"></i>
+                                回帰分析
+                            </button>
+                            <button class="quick-btn" data-analysis="clustering">
+                                <i data-lucide="circle-dot"></i>
+                                クラスタリング
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Custom Analysis Section -->
+                    <section class="input-section">
+                        <h3>カスタム分析指示</h3>
+                        <textarea 
+                            id="analysisInstructions" 
+                            placeholder="分析したい内容を自然言語で入力してください。例：「売上と広告費の相関を分析して、散布図を作成してください」"
+                            rows="4"
+                        ></textarea>
+                    </section>
+
+                    <!-- Analysis Method Selection -->
+                    <section class="input-section">
+                        <h3>分析手法</h3>
+                        <select id="analysisMethod">
+                            <option value="">自動選択</option>
+                            <option value="desc_stats_summary">記述統計量要約</option>
+                            <option value="t_test_independent">独立2標本t検定</option>
+                            <option value="correlation_analysis">相関分析</option>
+                            <option value="linear_regression">線形回帰分析</option>
+                            <option value="kmeans_clustering">K-meansクラスタリング</option>
+                        </select>
+                    </section>
+
+                    <!-- Parameters Section -->
+                    <section class="input-section" id="parametersSection" style="display: none;">
+                        <h3>パラメーター</h3>
+                        <div id="parametersContainer"></div>
+                    </section>
+
+                    <!-- Execute Button -->
+                    <div class="execute-section">
+                        <button class="execute-btn" id="executeBtn" disabled>
+                            <i data-lucide="play"></i>
+                            分析実行
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Results -->
+            <div class="right-panel">
+                <div class="panel-header">
+                    <h2><i data-lucide="activity"></i> 分析結果</h2>
+                    <div class="result-actions">
+                        <button class="action-btn" id="exportBtn" disabled>
+                            <i data-lucide="download"></i>
+                            エクスポート
+                        </button>
+                        <button class="action-btn" id="clearBtn">
+                            <i data-lucide="trash-2"></i>
+                            クリア
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-content">
+                    <!-- Welcome State -->
+                    <div class="welcome-state" id="welcomeState">
+                        <div class="welcome-content">
+                            <i data-lucide="chart-line"></i>
+                            <h3>Co-Analyst AI へようこそ</h3>
+                            <p>左側のパネルからデータファイルをアップロードして分析を開始してください。</p>
+                            <div class="feature-list">
+                                <div class="feature-item">
+                                    <i data-lucide="bar-chart-3"></i>
+                                    <span>記述統計と可視化</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i data-lucide="trending-up"></i>
+                                    <span>回帰分析と予測</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i data-lucide="scatter-chart"></i>
+                                    <span>相関分析</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i data-lucide="circle-dot"></i>
+                                    <span>クラスタリング</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress State -->
+                    <div class="progress-state" id="progressState" style="display: none;">
+                        <div class="progress-content">
+                            <div class="progress-animation">
+                                <div class="spinner"></div>
+                            </div>
+                            <h3>分析中...</h3>
+                            <p id="progressMessage">データを読み込んでいます...</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="progress-steps" id="progressSteps">
+                                <div class="step active">データ読み込み</div>
+                                <div class="step">前処理</div>
+                                <div class="step">分析実行</div>
+                                <div class="step">結果解釈</div>
+                                <div class="step">レポート生成</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results State -->
+                    <div class="results-state" id="resultsState" style="display: none;">
+                        <div class="results-content">
+                            <!-- Summary Section -->
+                            <div class="result-section">
+                                <h3><i data-lucide="file-text"></i> 分析サマリー</h3>
+                                <div class="summary-card" id="summaryCard">
+                                    <!-- Dynamic content will be inserted here -->
+                                </div>
+                            </div>
+
+                            <!-- Charts Section -->
+                            <div class="result-section">
+                                <h3><i data-lucide="bar-chart-3"></i> 可視化</h3>
+                                <div class="chart-container">
+                                    <canvas id="analysisChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Detailed Results Section -->
+                            <div class="result-section">
+                                <h3><i data-lucide="table"></i> 詳細結果</h3>
+                                <div class="detailed-results" id="detailedResults">
+                                    <!-- Dynamic content will be inserted here -->
+                                </div>
+                            </div>
+
+                            <!-- Interpretation Section -->
+                            <div class="result-section">
+                                <h3><i data-lucide="message-circle"></i> 解釈とアドバイス</h3>
+                                <div class="interpretation-card" id="interpretationCard">
+                                    <!-- Dynamic content will be inserted here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/mock-api.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

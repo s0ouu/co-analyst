@@ -1,0 +1,71 @@
+[
+  {
+    "id": "desc_stats_summary",
+    "name": "記述統計量要約",
+    "description": "データの基本統計量（平均、中央値、標準偏差、最小値、最大値など）を計算します。",
+    "tags": ["記述統計", "データ探索"],
+    "parameters": [
+      {"name": "variables", "type": "list", "description": "分析対象の変数名", "required": true},
+      {"name": "groupby", "type": "string", "description": "グループ化する変数名", "required": false}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\nimport numpy as np\ndf = pd.read_csv('{data_path}')\n{groupby_code}result = df[{variables_select}].describe()\nprint(result)\nresult.to_csv('{output_path}/desc_stats.csv')"
+    },
+    "interpretation_guideline_id": "desc_stats_interpret"
+  },
+  {
+    "id": "t_test_independent",
+    "name": "独立2標本t検定",
+    "description": "2つの独立したグループ間で平均値に統計的に有意な差があるかを検定します。",
+    "tags": ["推測統計", "仮説検定"],
+    "parameters": [
+      {"name": "data_column", "type": "string", "description": "数値データのある列", "required": true},
+      {"name": "group_column", "type": "string", "description": "グループを示すカテゴリカル列", "required": true}
+    ],
+    "code_template": {
+      "python": "from scipy import stats\nimport pandas as pd\ndf = pd.read_csv('{data_path}')\ngroups = df['{group_column}'].unique()\ngroup1 = df[df['{group_column}'] == groups[0]]['{data_column}']\ngroup2 = df[df['{group_column}'] == groups[1]]['{data_column}']\nt_stat, p_value = stats.ttest_ind(group1, group2)\nprint(f'T統計量: {t_stat:.4f}, P値: {p_value:.4f}')\nresult = {'t_statistic': t_stat, 'p_value': p_value, 'group1_mean': group1.mean(), 'group2_mean': group2.mean()}\nimport json\nwith open('{output_path}/t_test_result.json', 'w') as f:\n    json.dump(result, f, ensure_ascii=False, indent=2)"
+    },
+    "interpretation_guideline_id": "p_value_interpret"
+  },
+  {
+    "id": "correlation_analysis",
+    "name": "相関分析",
+    "description": "変数間の相関係数を計算し、相関行列を生成します。",
+    "tags": ["相関分析", "データ探索"],
+    "parameters": [
+      {"name": "variables", "type": "list", "description": "分析対象の変数名", "required": true}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\ndf = pd.read_csv('{data_path}')\ncorr_matrix = df[{variables_select}].corr()\nprint(corr_matrix)\nplt.figure(figsize=(10, 8))\nsns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0)\nplt.title('相関行列ヒートマップ')\nplt.savefig('{output_path}/correlation_heatmap.png', dpi=300, bbox_inches='tight')\nplt.close()\ncorr_matrix.to_csv('{output_path}/correlation_matrix.csv')"
+    },
+    "interpretation_guideline_id": "correlation_interpret"
+  },
+  {
+    "id": "linear_regression",
+    "name": "線形回帰分析",
+    "description": "目的変数と説明変数の間の線形関係を分析します。",
+    "tags": ["機械学習", "回帰分析"],
+    "parameters": [
+      {"name": "target_variable", "type": "string", "description": "目的変数", "required": true},
+      {"name": "feature_variables", "type": "list", "description": "説明変数のリスト", "required": true}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import r2_score, mean_squared_error\nimport matplotlib.pyplot as plt\ndf = pd.read_csv('{data_path}')\nX = df[{feature_variables}]\ny = df['{target_variable}']\nmodel = LinearRegression()\nmodel.fit(X, y)\ny_pred = model.predict(X)\nr2 = r2_score(y, y_pred)\nrmse = mean_squared_error(y, y_pred, squared=False)\nprint(f'決定係数 (R²): {r2:.4f}')\nprint(f'RMSE: {rmse:.4f}')\nresult = {'r2_score': r2, 'rmse': rmse, 'coefficients': model.coef_.tolist(), 'intercept': model.intercept_}\nimport json\nwith open('{output_path}/regression_result.json', 'w') as f:\n    json.dump(result, f, ensure_ascii=False, indent=2)"
+    },
+    "interpretation_guideline_id": "regression_interpret"
+  },
+  {
+    "id": "kmeans_clustering",
+    "name": "K-means クラスタリング",
+    "description": "データをK個のクラスターに分割します。",
+    "tags": ["機械学習", "クラスタリング"],
+    "parameters": [
+      {"name": "features", "type": "list", "description": "クラスタリングに使用する特徴量", "required": true},
+      {"name": "n_clusters", "type": "integer", "description": "クラスター数", "required": true}
+    ],
+    "code_template": {
+      "python": "import pandas as pd\nfrom sklearn.cluster import KMeans\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.metrics import silhouette_score\nimport matplotlib.pyplot as plt\ndf = pd.read_csv('{data_path}')\nX = df[{features}]\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\nkmeans = KMeans(n_clusters={n_clusters}, random_state=42)\ncluster_labels = kmeans.fit_predict(X_scaled)\nsilhouette_avg = silhouette_score(X_scaled, cluster_labels)\nprint(f'シルエット係数: {silhouette_avg:.4f}')\ndf['cluster'] = cluster_labels\ndf.to_csv('{output_path}/clustered_data.csv', index=False)\nresult = {'silhouette_score': silhouette_avg, 'cluster_centers': kmeans.cluster_centers_.tolist()}\nimport json\nwith open('{output_path}/clustering_result.json', 'w') as f:\n    json.dump(result, f, ensure_ascii=False, indent=2)"
+    },
+    "interpretation_guideline_id": "clustering_interpret"
+  }
+]

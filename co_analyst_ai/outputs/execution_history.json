@@ -1,0 +1,66 @@
+[
+  {
+    "execution_id": "exec_20250716_193355_207116",
+    "method_id": "data_load",
+    "method_name": "データロード",
+    "success": false,
+    "execution_time": 0.072,
+    "timestamp": "2025-07-16T19:33:55.281117"
+  },
+  {
+    "execution_id": "exec_20250716_193355_284118",
+    "method_id": "desc_stats_summary",
+    "method_name": "記述統計量要約",
+    "success": false,
+    "execution_time": 0.064999,
+    "timestamp": "2025-07-16T19:33:55.351118"
+  },
+  {
+    "execution_id": "exec_20250716_193355_355118",
+    "method_id": "data_load",
+    "method_name": "データロード",
+    "success": false,
+    "execution_time": 0.053,
+    "timestamp": "2025-07-16T19:33:55.411118"
+  },
+  {
+    "execution_id": "exec_20250716_193355_413121",
+    "method_id": "default",
+    "method_name": "デフォルト処理",
+    "success": false,
+    "execution_time": 0.059,
+    "timestamp": "2025-07-16T19:33:55.474119"
+  },
+  {
+    "execution_id": "exec_20250716_193355_476121",
+    "method_id": "correlation_analysis",
+    "method_name": "相関分析",
+    "success": false,
+    "execution_time": 0.066002,
+    "timestamp": "2025-07-16T19:33:55.544119"
+  },
+  {
+    "execution_id": "exec_20250716_193355_548118",
+    "method_id": "data_load",
+    "method_name": "データロード",
+    "success": false,
+    "execution_time": 0.050995,
+    "timestamp": "2025-07-16T19:33:55.601117"
+  },
+  {
+    "execution_id": "exec_20250716_193355_607119",
+    "method_id": "default",
+    "method_name": "デフォルト処理",
+    "success": false,
+    "execution_time": 0.055006,
+    "timestamp": "2025-07-16T19:33:55.688911"
+  },
+  {
+    "execution_id": "exec_20250716_193355_691913",
+    "method_id": "t_test_independent",
+    "method_name": "独立2標本t検定",
+    "success": false,
+    "execution_time": 0.062999,
+    "timestamp": "2025-07-16T19:33:55.756911"
+  }
+]
